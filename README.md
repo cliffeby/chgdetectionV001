@@ -1,14 +1,12 @@
-<p style="text-align: center;">
 # Complex-Object Change Detection in Angular
 
  <img width="300" alt="Angular Logo" src="https://d6vdma9166ldh.cloudfront.net/media/images/bd9734c9-def0-47ee-b9ec-027fcfe3cae8.png">
-</p>
 
 I’m working on an Angular app that has several parent-child components.  Things were going well using the @Input() and @Output() decorators to pass data between components.  My data object increased in complexity when I started using Angular Material tables to display my data.  Suddenly, I was getting inconsistent behavior in the view.  Sometimes data were updated; other times partially, or not at all.  
 
 Researching the “change detection loop” and posts on how to force or limit change detection, offered little toward solving my problem.  Blogs on zones, state change triggers, and DOM trees were informational, but none explained the inconsistent behavior.  After hundreds of console.logs and breakpoints, I spotted my problem.  **Object properties that hold an array reference only update when another value property in the object changes.**   I suspect that I read something like that in a post, but to a non-computer science major, it went over my head.
 
-Let’s look at an example. My Angular class Match is defined as:
+Let’s look at an example. My Angular data model is defined in class Match:
 
 ```typescript
   export class Match {
@@ -17,8 +15,8 @@ Let’s look at an example. My Angular class Match is defined as:
 }
 ```
 
-My app component creates an instance of Match and has three methods:
-1.	addName - To add a name to playerNames.
+My app component creates an instance of Match which has three methods:
+1.	addName - To add a name to the playerNames array.
 2.	changeMatchName - To change the match name, and 
 3.	spread - To be discussed later.
 
@@ -77,11 +75,13 @@ Note that **<div> line 1**, contains a value property length that is not include
   
 ## The problem
 *When the app initiates, it ouputs:*
+
 1: Match 0  Player names:  # of players :0
 
 2: Match 0  Player names:
 
 *Step1: I add a player, line 1 adds the player name but Line 2 does not.*
+
 1: Match 0  Player names: Bob0  # of players :1
 
 2: Match 0  Player names:
@@ -94,7 +94,7 @@ Note that **<div> line 1**, contains a value property length that is not include
 
 ## So what is happening?
 
-Since the addName() method is **pushing** a value on the match.playerNames array, the reference value of the array is not changed.  Only on Line 1 where the “value” of the array length is changed in the view, does Angular’s change detection update that <div> of interpolated expressions.  That results in Line 1 with current values of player names, and Line 2 with stale values.
+Since the addName() method is **pushing** a value on the match.playerNames array, the reference value of the array is not changed.  Only on Line 1 where the “value” of the array length is changed in the view, does Angular’s change detection update that <div> of interpolated expressions.  So not only does the component and it view have different change detection loops, but the view is granular in what gets updated. That results in Line 1 with current values of player names, and Line 2 with stale values.
 
 In Step 2, changing the match’s name, which is assigned by value, creates a change detection cycle on both <div> lines resulting in both lines showing the current state of players.
 
