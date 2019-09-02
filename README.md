@@ -1,2 +1,110 @@
 # chgdetectionV001
 Angular Change Detection Blog
+Complex Object Change Detection in Angular
+
+I’m working on an Angular app that has several parent-child components.  Things were going well using the @Input() and @Output() decorators to pass data between components.  My data object increased in complexity when I started using Angular Material tables to display my data.  Suddenly, I was getting inconsistent behavior in the view.  Sometimes data were updated; other times partially, or not at all.  
+
+Researching the “change detection loop” and posts on how to force or limit change detection, offered little toward solving my problem.  Blogs on zones, state change triggers, and DOM trees were informational, but none explained the inconsistent behavior.  After hundreds of console.logs and breakpoints, I spotted my problem.  **Object properties that hold an array reference only update when another value property in the object changes.**   I suspect that I read something like that in a post, but to a non-computer science major, it went over my head.
+
+Let’s look at an example. My Angular class Match is defined as:
+
+```export class Match {
+  name: string;
+  playerNames: string[];
+}```
+
+My app component creates an instance of Match and has three methods:
+1.	addName - To add a name to playerNames.
+2.	changeMatchName - To change the match name, and 
+3.	spread - To be discussed later.
+4.	export class AppComponent {
+5.	  title = "chg-detection";
+6.	  match = new Match();
+7.	  counter: number;
+8.	  constructor() {
+9.	    this.match.playerNames = [];
+10.	    this.match.name = 'Match 0';
+11.	    this.counter = 1;
+12.	  }
+13.	
+14.	  addName() {
+15.	    this.match.playerNames.push("Bob" + this.match.playerNames.length);
+16.	  }
+17.	  changeMatchName(counter) {
+18.	    this.match.name = "Match " + counter.toString();
+19.	    this.counter++;
+20.	  }
+21.	  spread() {
+22.	    this.match.playerNames = [
+23.	      ...this.match.playerNames,
+24.	      "Chuck" + this.match.playerNames.length
+25.	    ];
+26.	  }
+27.	}
+
+
+The html is:
+<div style="text-align:center">
+  <h1>
+    Object {{ title }}!
+  </h1>
+  <img width="300" alt="Angular Logo" src="https://d6vdma9166ldh.cloudfront.net/media/images/bd9734c9-def0-47ee-b9ec-027fcfe3cae8.png">
+  <br>
+  <br>
+</div>
+<div>1: {{match.name}}  Player names: {{match.playerNames}}   # of players :{{match.playerNames.length}}</div>
+<br>
+<div>2: {{match.name}}  Player names: {{match.playerNames}} </div>
+<br>
+<button  color="primary" (click)="addName()">
+  Add Player
+</button>
+<button  color="primary" (click)="changeMatchName(counter)">
+  Change Match Name
+</button>
+<button  color="primary" (click)="spread()">
+  Do Both
+</button>
+
+Note that <div> line 1, contains a value property length that is not included in <div> line 2.
+The problem
+I start with:
+1: Match 0  Player names:  # of players :0
+
+2: Match 0  Player names:
+
+Step1: I add a player, line 1 adds the player name but Line 2 does not.
+1: Match 0  Player names: Bob0  # of players :1
+
+2: Match 0  Player names:
+
+Step 2: I change the match name, both lines update player names to the current state of the Match object
+
+1: Match 1  Player names: Bob0  # of players :1
+
+2: Match 1  Player names: Bob0
+
+So what is happening - Since the addName() method is pushing a value on the match.playerNames array, the reference value of the array is not changed.  Only on Line 1 where the “value” of the array length is changed in the view, does Angular’s change detection update that <div> of interpolated expressions.  That results in Line 1 with current values of player names and Line 2 with stale values.
+
+In Step 2, changing the match’s name, which is assigned by value, creates a change detection cycle on both <div> lines resulting in both lines showing the current state of players.
+
+This StackBlitz https://angular-sa1un1.stackblitz.io   https://stackblitz.com/edit/angular-sa1un1 link provides a working demo.
+
+Why this inconsistency?
+
+For most apps, I would expect that the current values of an object’s properties are what is anticipated in the view. I have not seen an explanation of why array or other reference objects are not part of change detection, but I suspect it is performance based since navigating the entire tree can be expensive.  For example, Angular does offer a “ChangeDetectionStrategy.OnPush” strategy to limit change detection to only part of the component tree for performance improvement.
+
+The fix
+
+Several options are possible to force change detection on a reference value.  They all rely on the Angular change detection principle that new values are always updated.
+1.	An ngrx approach with a Redux store.
+2.	Use of immutable.js
+3.	Use of the ES6 spread operator
+I chose the spread operator as it seemed the easiest to implement, understand, and native to javascript.  The spread operator has the form data = {…data, new} where new replaces or adds values to the existing data object and creates a new object value.  More on spread here: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+
+In my example the:
+thismatch.playerNames.push(‘Bob’) becomes
+this.match.playerNames = [...this.match.playerNames, 'Chuck'];
+
+
+  
