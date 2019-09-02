@@ -6,19 +6,19 @@ Researching the “change detection loop” and posts on how to force or limit c
 
 Let’s look at an example. My Angular class Match is defined as:
 
-`` Typescript
+```typescript
   export class Match {
   name: string;
   playerNames: string[];
 }
-``
+```
 
 My app component creates an instance of Match and has three methods:
 1.	addName - To add a name to playerNames.
 2.	changeMatchName - To change the match name, and 
 3.	spread - To be discussed later.
 
-``
+```typescript
 export class AppComponent {
   title = "chg-detection";
   match = new Match();
@@ -43,12 +43,12 @@ export class AppComponent {
     ];
   }
 }
-``
+```
 
 
 The html is:
 
-
+```html
   <div style="text-align:center">
     <h1>
       Welcome to {{ title }}!
@@ -68,7 +68,7 @@ The html is:
   <button  color="primary" (click)="spread()">
     Do Both
   </button>
-
+```
 
 Note that **<div> line 1**, contains a value property length that is not included in **<div> line 2**.
   
@@ -89,7 +89,9 @@ Step 2: I change the match name, both lines update player names to the current s
 
 2: Match 1  Player names: Bob0
 
-So what is happening - Since the addName() method is pushing a value on the match.playerNames array, the reference value of the array is not changed.  Only on Line 1 where the “value” of the array length is changed in the view, does Angular’s change detection update that <div> of interpolated expressions.  That results in Line 1 with current values of player names and Line 2 with stale values.
+## So what is happening - 
+
+Since the addName() method is pushing a value on the match.playerNames array, the reference value of the array is not changed.  Only on Line 1 where the “value” of the array length is changed in the view, does Angular’s change detection update that <div> of interpolated expressions.  That results in Line 1 with current values of player names and Line 2 with stale values.
 
 In Step 2, changing the match’s name, which is assigned by value, creates a change detection cycle on both <div> lines resulting in both lines showing the current state of players.
 
