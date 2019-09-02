@@ -2,9 +2,9 @@
 
  <img width="300" alt="Angular Logo" src="https://d6vdma9166ldh.cloudfront.net/media/images/bd9734c9-def0-47ee-b9ec-027fcfe3cae8.png">
 
-I’m working on an Angular app that has several parent-child components.  Things were going well using the @Input() and @Output() decorators to pass data between components.  My data object increased in complexity when I started using Angular Material tables for data display.  Suddenly, I was getting inconsistent behavior in the view.  Sometimes data were updated; other times partially, or not at all.  
+I’m working on an Angular app that has several parent-child components.  Things were going well using the @Input() and @Output() decorators to pass data between components.  Then, my data object increased in complexity when I started using Angular Material tables for data display.  Suddenly, I was getting inconsistent behavior in the view.  Sometimes data were updated; other times partially, or not at all.  
 
-Researching the “change detection loop” and posts on how to force or limit change detection, offered little toward solving my problem.  Blogs on zones, state change triggers, and DOM trees were informational, but none explained the inconsistent behavior.  After hundreds of console.logs and breakpoints, I spotted my problem.  **Object properties that hold an array reference only update when another value property in the object changes.**   I suspect that I read something like that in a post, but to a non-computer science major, it went over my head.
+Researching the “change detection loop” and posts on how to force or limit change detection, offered little toward solving my problem.  Blogs on zones, state change triggers, and DOM trees were informational, but none explained the inconsistent behavior.  After hundreds of console.logs and breakpoints, I spotted my problem.  **Object properties that hold an array reference only update when another value property in the object changes.**   I suspect that I read something like that in a post, but to a non computer-science major, it went over my head.
 
 Let’s look at an example. My Angular data model is defined in class Match:
 
@@ -94,7 +94,7 @@ Note that **<div> line 1**, contains a value property length that is not include
 
 ## So what is happening?
 
-Since the addName() method is **pushing** a value on the match.playerNames array, the reference value of the array is not changed.  Only on Line 1 where the “value” of the array length is changed in the view, does Angular’s change detection update that <div> of interpolated expressions.  So not only does the component and it view have different change detection loops, but the view is granular in what gets updated. That results in Line 1 with current values of player names, and Line 2 with stale values.
+Since the addName() method is **pushing** a value on the match.playerNames array, the reference value of the array is not changed.  Only on Line 1 where the “value” of the array length is changed in the view, does Angular’s change detection loop update that <div> of interpolated expressions.  So not only do the component and its view have different change detection loops, but the view is granular in what gets updated. That results in Line 1 with current values of player names, and Line 2 with stale values.
 
 In Step 2, changing the match’s name, which is assigned by value, creates a change detection cycle on both <div> lines resulting in both lines showing the current state of players.
 
@@ -102,7 +102,7 @@ This [StackBlitz](https://stackblitz.com/edit/angular-sa1un1) link provides a wo
 
 ## Why this inconsistency?
 
-For most apps, I would expect that the current values of an object’s properties are what is anticipated in the view. I have not seen an explanation of why array or other reference objects are not part of change detection, but I suspect it is performance based since navigating the entire tree and especially big arrays can be expensive.  In support of this conclusion, Angular does offer a “ChangeDetectionStrategy.OnPush” strategy to limit change detection to only part of the component tree for performance improvement.
+For most apps, I would expect that the current values of an object’s properties are what is anticipated in the view. I have not seen an explanation of why array or other reference objects are not part of change detection, but I suspect it is performance based since navigating the entire tree and especially big arrays can be expensive.  In support of this conclusion, Angular does offer a “ChangeDetectionStrategy.OnPush” strategy to limit change detection to only part of the component tree.  The rationale for .onPush is performance improvement.
 
 ## The fix
 
@@ -120,5 +120,5 @@ becomes
 
 this.match.playerNames = [...this.match.playerNames, 'Chuck'];
 ```
-
+Another approach would be to use a service to retrieve the data object.  In my case, the server data model uses a player id property to reference all player attributes.  Including playerNames in that model would add redundant data to the backend datastore or would create a complex angular service.
   
