@@ -2,7 +2,7 @@
 
  <img width="300" alt="Angular Logo" src="https://d6vdma9166ldh.cloudfront.net/media/images/bd9734c9-def0-47ee-b9ec-027fcfe3cae8.png">
 
-I’m working on an Angular app that has several parent-child components.  Things were going well using the @Input() and @Output() decorators to pass data between components.  My data object increased in complexity when I started using Angular Material tables to display my data.  Suddenly, I was getting inconsistent behavior in the view.  Sometimes data were updated; other times partially, or not at all.  
+I’m working on an Angular app that has several parent-child components.  Things were going well using the @Input() and @Output() decorators to pass data between components.  My data object increased in complexity when I started using Angular Material tables for data display.  Suddenly, I was getting inconsistent behavior in the view.  Sometimes data were updated; other times partially, or not at all.  
 
 Researching the “change detection loop” and posts on how to force or limit change detection, offered little toward solving my problem.  Blogs on zones, state change triggers, and DOM trees were informational, but none explained the inconsistent behavior.  After hundreds of console.logs and breakpoints, I spotted my problem.  **Object properties that hold an array reference only update when another value property in the object changes.**   I suspect that I read something like that in a post, but to a non-computer science major, it went over my head.
 
@@ -67,7 +67,7 @@ The html is:
     Change Match Name
   </button>
   <button  color="primary" (click)="spread()">
-    Do Both
+    Spread
   </button>
 ```
 
