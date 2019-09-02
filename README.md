@@ -1,6 +1,4 @@
-# chgdetectionV001
-Angular Change Detection Blog
-Complex Object Change Detection in Angular
+# Complex Object Change Detection in Angular
 
 I’m working on an Angular app that has several parent-child components.  Things were going well using the @Input() and @Output() decorators to pass data between components.  My data object increased in complexity when I started using Angular Material tables to display my data.  Suddenly, I was getting inconsistent behavior in the view.  Sometimes data were updated; other times partially, or not at all.  
 
@@ -8,7 +6,7 @@ Researching the “change detection loop” and posts on how to force or limit c
 
 Let’s look at an example. My Angular class Match is defined as:
 
-``
+`` Typescript
   export class Match {
   name: string;
   playerNames: string[];
@@ -51,25 +49,25 @@ export class AppComponent {
 The html is:
 
 ``
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="https://d6vdma9166ldh.cloudfront.net/media/images/bd9734c9-def0-47ee-b9ec-027fcfe3cae8.png">
-</div>
-<div>1: {{match.name}} Player names: {{match.playerNames}} # of players :{{match.playerNames.length}}</div>
-<br>
-<div>2: {{match.name}} Player names: {{match.playerNames}} </div>
-<br>
-<button  color="primary" (click)="addName()">
-  Add Player
-</button>
-<button  color="primary" (click)="changeMatchName(counter)">
-  Change Match Name
-</button>
-<button  color="primary" (click)="spread()">
-  Do Both
-</button>
+  <div style="text-align:center">
+    <h1>
+      Welcome to {{ title }}!
+    </h1>
+    <img width="300" alt="Angular Logo" src="https://d6vdma9166ldh.cloudfront.net/media/images/bd9734c9-def0-47ee-b9ec-027fcfe3cae8.png">
+  </div>
+  <div>1: {{match.name}} Player names: {{match.playerNames}} # of players :{{match.playerNames.length}}</div>
+  <br>
+  <div>2: {{match.name}} Player names: {{match.playerNames}} </div>
+  <br>
+  <button  color="primary" (click)="addName()">
+    Add Player
+  </button>
+  <button  color="primary" (click)="changeMatchName(counter)">
+    Change Match Name
+  </button>
+  <button  color="primary" (click)="spread()">
+    Do Both
+  </button>
 ``
 
 Note that **<div> line 1**, contains a value property length that is not included in **<div> line 2**.
