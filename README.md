@@ -8,53 +8,58 @@ Researching the “change detection loop” and posts on how to force or limit c
 
 Let’s look at an example. My Angular class Match is defined as:
 
-```export class Match {
+``
+  export class Match {
   name: string;
   playerNames: string[];
-}```
+}
+``
 
 My app component creates an instance of Match and has three methods:
 1.	addName - To add a name to playerNames.
 2.	changeMatchName - To change the match name, and 
 3.	spread - To be discussed later.
-4.	export class AppComponent {
-5.	  title = "chg-detection";
-6.	  match = new Match();
-7.	  counter: number;
-8.	  constructor() {
-9.	    this.match.playerNames = [];
-10.	    this.match.name = 'Match 0';
-11.	    this.counter = 1;
-12.	  }
-13.	
-14.	  addName() {
-15.	    this.match.playerNames.push("Bob" + this.match.playerNames.length);
-16.	  }
-17.	  changeMatchName(counter) {
-18.	    this.match.name = "Match " + counter.toString();
-19.	    this.counter++;
-20.	  }
-21.	  spread() {
-22.	    this.match.playerNames = [
-23.	      ...this.match.playerNames,
-24.	      "Chuck" + this.match.playerNames.length
-25.	    ];
-26.	  }
-27.	}
+
+``
+export class AppComponent {
+  title = "chg-detection";
+  match = new Match();
+  counter: number;
+  constructor() {
+    this.match.playerNames = [];
+    this.match.name = 'Match 0';
+    this.counter = 1;
+  }
+
+  addName() {
+    this.match.playerNames.push("Bob" + this.match.playerNames.length);
+  }
+  changeMatchName(counter) {
+    this.match.name = "Match " + counter.toString();
+    this.counter++;
+  }
+  spread() {
+    this.match.playerNames = [
+      ...this.match.playerNames,
+      "Chuck" + this.match.playerNames.length
+    ];
+  }
+}
+``
 
 
 The html is:
+
+``
 <div style="text-align:center">
   <h1>
-    Object {{ title }}!
+    Welcome to {{ title }}!
   </h1>
   <img width="300" alt="Angular Logo" src="https://d6vdma9166ldh.cloudfront.net/media/images/bd9734c9-def0-47ee-b9ec-027fcfe3cae8.png">
-  <br>
-  <br>
 </div>
-<div>1: {{match.name}}  Player names: {{match.playerNames}}   # of players :{{match.playerNames.length}}</div>
+<div>1: {{match.name}} Player names: {{match.playerNames}} # of players :{{match.playerNames.length}}</div>
 <br>
-<div>2: {{match.name}}  Player names: {{match.playerNames}} </div>
+<div>2: {{match.name}} Player names: {{match.playerNames}} </div>
 <br>
 <button  color="primary" (click)="addName()">
   Add Player
@@ -65,9 +70,11 @@ The html is:
 <button  color="primary" (click)="spread()">
   Do Both
 </button>
+``
 
-Note that <div> line 1, contains a value property length that is not included in <div> line 2.
-The problem
+Note that **<div> line 1**, contains a value property length that is not included in **<div> line 2**.
+  
+## The problem
 I start with:
 1: Match 0  Player names:  # of players :0
 
@@ -90,11 +97,11 @@ In Step 2, changing the match’s name, which is assigned by value, creates a ch
 
 This StackBlitz https://angular-sa1un1.stackblitz.io   https://stackblitz.com/edit/angular-sa1un1 link provides a working demo.
 
-Why this inconsistency?
+## Why this inconsistency?
 
 For most apps, I would expect that the current values of an object’s properties are what is anticipated in the view. I have not seen an explanation of why array or other reference objects are not part of change detection, but I suspect it is performance based since navigating the entire tree can be expensive.  For example, Angular does offer a “ChangeDetectionStrategy.OnPush” strategy to limit change detection to only part of the component tree for performance improvement.
 
-The fix
+## The fix
 
 Several options are possible to force change detection on a reference value.  They all rely on the Angular change detection principle that new values are always updated.
 1.	An ngrx approach with a Redux store.
