@@ -114,7 +114,10 @@ I chose the spread operator as it seemed it is the easiest to implement, to unde
 
 In my example the:
 ```typescript
-this.match.playerNames.push(‘Bob’) becomes
+this.match.playerNames.push(‘Bob’) 
+
+becomes
+
 this.match.playerNames = [...this.match.playerNames, 'Chuck'];
 ```
 
