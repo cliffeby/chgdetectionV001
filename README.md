@@ -48,7 +48,7 @@ export class AppComponent {
 
 The html is:
 
-``
+
   <div style="text-align:center">
     <h1>
       Welcome to {{ title }}!
@@ -68,7 +68,7 @@ The html is:
   <button  color="primary" (click)="spread()">
     Do Both
   </button>
-``
+
 
 Note that **<div> line 1**, contains a value property length that is not included in **<div> line 2**.
   
@@ -93,7 +93,7 @@ So what is happening - Since the addName() method is pushing a value on the matc
 
 In Step 2, changing the match’s name, which is assigned by value, creates a change detection cycle on both <div> lines resulting in both lines showing the current state of players.
 
-This StackBlitz https://angular-sa1un1.stackblitz.io   https://stackblitz.com/edit/angular-sa1un1 link provides a working demo.
+This [StackBlitz](https://stackblitz.com/edit/angular-sa1un1) link provides a working demo.
 
 ## Why this inconsistency?
 
@@ -105,11 +105,12 @@ Several options are possible to force change detection on a reference value.  Th
 1.	An ngrx approach with a Redux store.
 2.	Use of immutable.js
 3.	Use of the ES6 spread operator
-I chose the spread operator as it seemed the easiest to implement, understand, and native to javascript.  The spread operator has the form data = {…data, new} where new replaces or adds values to the existing data object and creates a new object value.  More on spread here: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+I chose the spread operator as it seemed it is the easiest to implement, to understand, and it is native to javascript.  The spread operator has the form data = {…data, new} where new replaces or adds values to the existing data object and creates a new object value.  More on spread can be found [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax).
 
 In my example the:
-thismatch.playerNames.push(‘Bob’) becomes
+``
+this.match.playerNames.push(‘Bob’) becomes
 this.match.playerNames = [...this.match.playerNames, 'Chuck'];
-
+``
 
   
