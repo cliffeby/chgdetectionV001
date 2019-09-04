@@ -70,7 +70,7 @@ The html is:
   </button>
 ```
 
-Note that *<div> line 1*, contains a value property length that is not included in *<div> line 2*.
+Note that ** <div> line 1 **, contains a value property length that is not included in ** <div> line 2 **.
   
 ## The problem
 *When the app initiates, it ouputs:*
