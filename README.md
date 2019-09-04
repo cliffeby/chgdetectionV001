@@ -119,7 +119,9 @@ becomes
 
 this.match.playerNames = [...this.match.playerNames, 'Chuck'];
 ```
-Another approach would be to use a service to retrieve the data object.  In my case, the server data model uses a player id property to reference all player attributes.  Including playerNames in that model would add redundant data to the backend datastore or would create a complex angular service.
+Another approach would be to use a service to retrieve the data object.  In my case, the server data model uses a player id property to reference all player attributes.  Including playerNames in that model would add redundant data to the backend datastore or would create a complex angular service using Local Storage.
 
-Local Storage
-  
+Read more [here](https://itnext.io/dont-clone-back-end-models-in-angular-f7a749bdc1b0)  
+
+
+
