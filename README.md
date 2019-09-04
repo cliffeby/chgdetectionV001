@@ -85,7 +85,7 @@ Note that **div line 1, contains a value property length that is not included in
 
 2: Match 0  Player names:
 
-*Step 2: I change the match name, both lines update player names to the current state of the Match object*
+*Step 2: I change the match name.  Both lines 1 and 2 update player names to the current state of the Match object*
 
 1: Match 1  Player names: Bob0  # of players :1
 
@@ -108,7 +108,7 @@ For most apps, I would expect that the current values of an object’s propertie
 Several options are possible to force change detection on a reference value.  They all rely on the Angular change detection principle that new objects are always updated.
 1.	An ngrx approach with a Redux store.
 2.	Use of immutable.js
-3.	Use of the ES6 spread operator
+3.	Use of the ES6 spread operator.
 I chose the spread operator as it seemed it is the easiest to implement, to understand, and it is native to javascript.  The spread operator has the form data = {…data, new} where new replaces or adds values to the existing data object and creates a new object value.  More on spread can be found [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax).
 
 In my example the:
@@ -119,7 +119,7 @@ becomes
 
 this.match.playerNames = [...this.match.playerNames, 'Chuck'];
 ```
-Another approach would be to use a service to retrieve the data object.  In my case, the server data model uses a player id property to reference all player attributes.  Including playerNames in that model would add redundant data to the backend datastore or would create a complex angular service using Local Storage.
+Another approach would be to use a service to retrieve the data object.  In my case, the server data model uses a player id property in match to reference all player attributes.  Including playerNames in that model would add redundant data to the backend datastore or would create a complex angular service using Local Storage.
 
 Read more [here](https://itnext.io/dont-clone-back-end-models-in-angular-f7a749bdc1b0)  
 
