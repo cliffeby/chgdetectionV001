@@ -93,7 +93,7 @@ Note that **div line 1, contains a value property length that is not included in
 
 ## So what is happening?
 
-Since the addName() method is **pushing** a value on the match.playerNames array, the reference value of the array is not changed.  Only on Line 1 where the “value” of the array length is changed in the view, does Angular’s change detection loop update that <div> of interpolated expressions.  So not only do the component and its view have different change detection loops, but the view is granular in what gets updated. That results in Line 1 with current values of player names, and Line 2 with stale values.
+Since the addName() method is **pushing** a value on the match.playerNames array, the reference value of the array is not changed.  Only on Line 1 where the “value” of the array length is changed in the view, does Angular’s change detection loop update that div of interpolated expressions.  So not only do the component and its view have different change detection loops, but the view is granular in what gets updated. That results in Line 1 with current values of player names, and Line 2 with stale values.
 
 In Step 2, changing the match’s name, which is assigned by value, creates a change detection cycle on both <div> lines resulting in both lines showing the current state of players.
 
@@ -109,6 +109,7 @@ Several options are possible to force change detection on a reference value.  Th
 1.	An ngrx approach with a Redux store.
 2.	Use of immutable.js
 3.	Use of the ES6 spread operator.
+
 I chose the spread operator as it seemed it is the easiest to implement, to understand, and it is native to javascript.  The spread operator has the form data = {…data, new} where new replaces or adds values to the existing data object and creates a new object value.  More on spread can be found [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax).
 
 In my example the:
